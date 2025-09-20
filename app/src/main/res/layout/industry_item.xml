@@ -10,10 +10,10 @@
         android:id="@+id/industry_text"
         style="@style/TextRegular.16.text_filter_empty"
         android:layout_width="match_parent"
+        android:layout_marginEnd="@dimen/_64dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/filter_text"
         android:maxLines="2"
-        app:layout_constraintEnd_toStartOf="@id/industryButton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/empty_list" />
