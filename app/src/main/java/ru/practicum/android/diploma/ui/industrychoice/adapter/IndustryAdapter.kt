@@ -10,6 +10,11 @@ class IndustryAdapter(
 ) : RecyclerView.Adapter<IndustryViewHolder>() {
 
     private var items: MutableList<IndustryItemUi> = mutableListOf()
+
+    fun getItems(): List<IndustryItemUi> {
+        return items
+    }
+
     private val originalList: MutableList<IndustryItemUi> = mutableListOf()
     private val filteredList: MutableList<IndustryItemUi> = mutableListOf()
 

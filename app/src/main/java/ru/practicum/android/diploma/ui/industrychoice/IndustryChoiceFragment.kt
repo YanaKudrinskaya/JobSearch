@@ -84,6 +84,12 @@ class IndustryChoiceFragment : Fragment() {
                 binding.searchFieldIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_close))
                 adapter.filter(binding.searchIndustry.text.toString())
             }
+            binding.applyButton.isVisible = false
+            adapter.getItems().forEach {
+                if (it.id.toInt() == currentIndustryId) {
+                    binding.applyButton.isVisible = true
+                }
+            }
         }
 
         viewModel.getScreenState().observe(viewLifecycleOwner) { state ->
