@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -83,9 +83,8 @@ class WorkplaceChoiceFragment : Fragment() {
         binding.countryEditText.setText(country.orEmpty())
         val hasText = country != null && country.isNotEmpty()
         val iconRes = if (hasText) R.drawable.ic_close else R.drawable.ic_arrow_forward
-        binding.arrowForward.setImageResource(iconRes)
-
-        binding.countryEditText.setOnClickListener {
+        binding.countryTextInputLayout.endIconDrawable = ContextCompat.getDrawable(requireContext(), iconRes)
+        binding.countryTextInputLayout.setEndIconOnClickListener {
             if (hasText) {
                 viewModel.clearCountrySelection()
             } else {
@@ -98,9 +97,9 @@ class WorkplaceChoiceFragment : Fragment() {
         binding.regionEditText.setText(area.orEmpty())
         val hasText = area != null && area.isNotEmpty()
         val iconRes = if (hasText) R.drawable.ic_close else R.drawable.ic_arrow_forward
-        binding.arrowForward2.setImageResource(iconRes)
+        binding.regionTextInputLayout.endIconDrawable = ContextCompat.getDrawable(requireContext(), iconRes)
 
-        binding.regionEditText.setOnClickListener {
+        binding.regionTextInputLayout.setEndIconOnClickListener {
             if (hasText) {
                 viewModel.clearAreaSelection()
             } else {
