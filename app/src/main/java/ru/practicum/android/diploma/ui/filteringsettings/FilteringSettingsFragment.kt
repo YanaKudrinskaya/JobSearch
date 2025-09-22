@@ -83,7 +83,6 @@ class FilteringSettingsFragment : Fragment() {
                 }
                 FilterScreenState.Empty -> {
                     showEmptyState()
-                    //updateActionButtonsVisibility(FilterSettings())
                 }
             }
         }
