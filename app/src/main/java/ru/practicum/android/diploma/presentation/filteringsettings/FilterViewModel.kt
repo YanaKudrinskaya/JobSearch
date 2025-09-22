@@ -22,6 +22,7 @@ class FilterViewModel(
     private fun loadFilterSettings() {
         val filter = filterInteractor.getFilterOptions()
         updateScreenState(filter)
+        hasChangesLiveData.value = filterInteractor.hasActiveFilters()
     }
 
     fun clearFilter() {
