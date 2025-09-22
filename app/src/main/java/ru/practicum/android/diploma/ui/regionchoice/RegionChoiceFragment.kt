@@ -58,7 +58,6 @@ class RegionChoiceFragment : Fragment() {
         setupListeners()
         observeViewModel()
 
-
     }
 
     override fun onResume() {
