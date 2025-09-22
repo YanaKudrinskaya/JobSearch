@@ -98,7 +98,7 @@ class IndustryChoiceFragment : Fragment() {
     private fun setupObserves() {
         viewModel.getScreenState().observe(viewLifecycleOwner) { state ->
             when (state) {
-                is IndustryChoiceScreenState.Content -> showContent(state.list, state.SavedIndustryId)
+                is IndustryChoiceScreenState.Content -> showContent(state.list, state.savedIndustryId)
                 IndustryChoiceScreenState.Empty -> showError()
                 IndustryChoiceScreenState.Error -> showError()
             }
