@@ -36,7 +36,12 @@ class IndustryChoiceViewModel(
                 is Resource.Success<*> -> {
                     result.data?.let { loadedIndustries ->
                         industries = loadedIndustries
-                        screenState.postValue(IndustryChoiceScreenState.Content(loadedIndustries, interactor.getSavedIndustryId()))
+                        screenState.postValue(
+                            IndustryChoiceScreenState.Content(
+                                loadedIndustries,
+                                interactor.getSavedIndustryId()
+                            )
+                        )
                     }
                 }
 
