@@ -98,7 +98,7 @@ class IndustryChoiceFragment : Fragment() {
     private fun setupObserves() {
         viewModel.getScreenState().observe(viewLifecycleOwner) { state ->
             when (state) {
-                is IndustryChoiceScreenState.Content -> showContent(state.list)
+                is IndustryChoiceScreenState.Content -> showContent(state.list, state.savedIndustryId)
                 IndustryChoiceScreenState.Empty -> showError()
                 IndustryChoiceScreenState.Error -> showError()
             }
@@ -106,9 +106,13 @@ class IndustryChoiceFragment : Fragment() {
         }
     }
 
-    private fun showContent(list: List<Industry>) {
+    private fun showContent(list: List<Industry>, savedIndustryId: Int?) {
         binding.errorPlaceholder.isVisible = false
         binding.recyclerView.isVisible = true
+        adapter.updateSelection(savedIndustryId)
+        if (savedIndustryId != null) {
+            binding.applyButton.isVisible = true
+        }
         adapter.setItems(list.toMutableList())
     }
 

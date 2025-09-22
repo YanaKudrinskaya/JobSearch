@@ -7,6 +7,7 @@ sealed class IndustryChoiceScreenState {
     object Error : IndustryChoiceScreenState()
     data class Content(
         val list: List<Industry>,
+        val savedIndustryId: Int?
     ) : IndustryChoiceScreenState()
 
 }
