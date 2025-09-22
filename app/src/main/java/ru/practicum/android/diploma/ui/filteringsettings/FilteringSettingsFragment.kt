@@ -76,13 +76,22 @@ class FilteringSettingsFragment : Fragment() {
     private fun setupObserves() {
         viewModel.getFilterStateLiveData().observe(viewLifecycleOwner) { state ->
             when (state) {
-                is FilterScreenState.Content -> showContent(state.filter)
-                FilterScreenState.Empty -> showEmptyState()
+                is FilterScreenState.Content -> {
+                    showContent(state.filter)
+                    updateActionButtonsVisibility(state.filter)
+                }
+                FilterScreenState.Empty -> {
+                    showEmptyState()
+                    updateActionButtonsVisibility(FilterSettings())
+                }
             }
         }
         viewModel.getHasChangesLiveData().observe(viewLifecycleOwner) { hasChanges ->
-            binding.applyButton.isVisible = hasChanges
-            binding.resetButton.isVisible = hasChanges
+            val currentFilter = getCurrentFilter()
+            val hasActiveFilters = hasActiveFilters(currentFilter)
+
+            binding.applyButton.isVisible = hasChanges && hasActiveFilters
+            binding.resetButton.isVisible = hasChanges && hasActiveFilters
         }
     }
 
@@ -121,6 +130,12 @@ class FilteringSettingsFragment : Fragment() {
             clearIcon.setOnClickListener {
                 expectedSalary.setText("")
                 updateSalary("")
+
+                binding.expectedSalary.isCursorVisible = false
+                binding.expectedSalary.clearFocus()
+                binding.expectedSalaryContainer.clearFocus()
+                binding.root.requestFocus()
+                KeyboardUtils.hideKeyboard(binding.expectedSalary)
             }
         }
     }
@@ -201,6 +216,23 @@ class FilteringSettingsFragment : Fragment() {
             expectedSalary.setText(filter.salary?.toString() ?: "")
             materialCheckBox.isChecked = filter.onlyWithSalary
         }
+        updateActionButtonsVisibility(filter)
+    }
+
+    private fun updateActionButtonsVisibility(filter: FilterSettings) {
+        val hasActiveFilters = hasActiveFilters(filter)
+        val hasChanges = viewModel.getHasChangesLiveData().value ?: false
+
+        binding.applyButton.isVisible = hasChanges && hasActiveFilters
+        binding.resetButton.isVisible = hasChanges && hasActiveFilters
+    }
+
+    private fun hasActiveFilters(filter: FilterSettings): Boolean {
+        return filter.countryName != null ||
+            filter.areaName != null ||
+            filter.industryName != null ||
+            filter.salary != null ||
+            filter.onlyWithSalary
     }
 
     private fun setupWorkplace(filter: FilterSettings) {
