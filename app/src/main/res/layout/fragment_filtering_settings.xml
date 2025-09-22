@@ -58,17 +58,6 @@
                 android:cursorVisible="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <ImageView
-            android:id="@+id/arrow_forward"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_forward"
-            app:tint="?attr/toolbarIconColor"
-            app:layout_constraintBottom_toBottomOf="@id/til_workplace"
-            app:layout_constraintEnd_toEndOf="@id/rightBorder"
-            app:layout_constraintTop_toTopOf="@id/til_workplace" />
-
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_industry"
             style = "@style/HintAppearance"
@@ -92,16 +81,6 @@
                 android:inputType="none"
                 android:cursorVisible="false"/>
         </com.google.android.material.textfield.TextInputLayout>
-
-        <ImageView
-            android:id="@+id/arrow_forward2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_forward"
-            app:tint="?attr/toolbarIconColor"
-            app:layout_constraintBottom_toBottomOf="@id/til_industry"
-            app:layout_constraintEnd_toEndOf="@id/rightBorder"
-            app:layout_constraintTop_toTopOf="@id/til_industry" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/expected_salary_container"
