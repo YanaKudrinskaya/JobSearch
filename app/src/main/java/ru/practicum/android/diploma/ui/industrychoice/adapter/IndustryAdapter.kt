@@ -4,19 +4,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.databinding.IndustryItemBinding
+import ru.practicum.android.diploma.domain.industrychoice.models.Industry
 
 class IndustryAdapter(
-    private val onClick: (IndustryItemUi) -> Unit
+    private val onClick: (Industry) -> Unit,
+    private var selectedId: Int? = null
 ) : RecyclerView.Adapter<IndustryViewHolder>() {
 
-    private var items: MutableList<IndustryItemUi> = mutableListOf()
+    private var items: MutableList<Industry> = mutableListOf()
+    private val originalList: MutableList<Industry> = mutableListOf()
+    private val filteredList: MutableList<Industry> = mutableListOf()
 
-    fun getItems(): List<IndustryItemUi> {
+    fun getItems(): List<Industry> {
         return items
     }
-
-    private val originalList: MutableList<IndustryItemUi> = mutableListOf()
-    private val filteredList: MutableList<IndustryItemUi> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IndustryViewHolder {
         val binding = IndustryItemBinding.inflate(
@@ -28,12 +29,13 @@ class IndustryAdapter(
     }
 
     override fun onBindViewHolder(holder: IndustryViewHolder, position: Int) {
-        holder.bind(items[position], onClick)
+        val item = items[position]
+        holder.bind(item, isItemSelected(item), onClick)
     }
 
     override fun getItemCount(): Int = items.size
 
-    fun setItems(newItems: MutableList<IndustryItemUi>) {
+    fun setItems(newItems: MutableList<Industry>) {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()
@@ -42,7 +44,7 @@ class IndustryAdapter(
         originalList.addAll(newItems)
     }
 
-    private fun updateDisplayList(updatedList: List<IndustryItemUi>) {
+    private fun updateDisplayList(updatedList: List<Industry>) {
         items.clear()
         items.addAll(updatedList)
         notifyDataSetChanged()
@@ -54,11 +56,18 @@ class IndustryAdapter(
             updateDisplayList(originalList)
         } else {
             for (item in originalList) {
-                if (item.title.contains(query, ignoreCase = true)) {
+                if (item.name.contains(query, ignoreCase = true)) {
                     filteredList.add(item)
                 }
             }
             updateDisplayList(filteredList)
         }
+    }
+    fun updateSelection(newSelectedId: Int?) {
+        selectedId = newSelectedId
+        notifyDataSetChanged()
+    }
+    fun isItemSelected(item: Industry): Boolean {
+        return item.id == selectedId
     }
 }

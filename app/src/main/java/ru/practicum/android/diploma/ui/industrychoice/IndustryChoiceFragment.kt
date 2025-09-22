@@ -16,7 +16,6 @@ import ru.practicum.android.diploma.domain.industrychoice.models.Industry
 import ru.practicum.android.diploma.presentation.industrychoice.IndustryChoiceScreenState
 import ru.practicum.android.diploma.presentation.industrychoice.IndustryChoiceViewModel
 import ru.practicum.android.diploma.ui.industrychoice.adapter.IndustryAdapter
-import ru.practicum.android.diploma.ui.industrychoice.adapter.IndustryItemUi
 import ru.practicum.android.diploma.ui.root.NavigationVisibilityController
 import kotlin.getValue
 
@@ -27,19 +26,17 @@ class IndustryChoiceFragment : Fragment() {
 
     private val viewModel: IndustryChoiceViewModel by viewModel()
 
-    private var currentIndustryId: Int? = null
+    private var selectedIndustryId: Int? = null
 
     private val adapter: IndustryAdapter by lazy {
-        IndustryAdapter { item: IndustryItemUi ->
-            binding.applyButton.isVisible = true
-            mutableListOfIndustryItemUi.indexOf(item)
-            mutableListOfIndustryItemUi.forEach {
-                it.isSelected = false
-            }
-            currentIndustryId = item.id.toInt()
-            mutableListOfIndustryItemUi[mutableListOfIndustryItemUi.indexOf(item)].isSelected = true
-            adapter.setItems(mutableListOfIndustryItemUi)
-        }
+        IndustryAdapter(
+            onClick = { industry ->
+                selectedIndustryId = industry.id
+                adapter.updateSelection(industry.id)
+                binding.applyButton.isVisible = true
+            },
+            selectedId = selectedIndustryId
+        )
     }
 
     override fun onCreateView(
@@ -63,18 +60,8 @@ class IndustryChoiceFragment : Fragment() {
         binding.recyclerView.adapter = adapter
         binding.recyclerView.visibility = View.VISIBLE
 
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        binding.applyButton.setOnClickListener {
-            currentIndustryId?.let { viewModel.saveIndustry(it) }
-            findNavController().navigateUp()
-        }
-
-        binding.searchFieldIcon.setOnClickListener {
-            binding.searchIndustry.setText("")
-        }
+        setupListeners()
+        setupObserves()
 
         binding.searchIndustry.doOnTextChanged { text, _, _, _ ->
             if (binding.searchIndustry.text.toString().isEmpty()) {
@@ -86,12 +73,29 @@ class IndustryChoiceFragment : Fragment() {
             }
             binding.applyButton.isVisible = false
             adapter.getItems().forEach {
-                if (it.id.toInt() == currentIndustryId) {
+                if (it.id == selectedIndustryId) {
                     binding.applyButton.isVisible = true
                 }
             }
         }
+    }
 
+    private fun setupListeners() {
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        binding.applyButton.setOnClickListener {
+            selectedIndustryId?.let { viewModel.saveIndustry(it) }
+            findNavController().navigateUp()
+        }
+
+        binding.searchFieldIcon.setOnClickListener {
+            binding.searchIndustry.setText("")
+        }
+    }
+
+    private fun setupObserves() {
         viewModel.getScreenState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is IndustryChoiceScreenState.Content -> showContent(state.list)
@@ -102,14 +106,10 @@ class IndustryChoiceFragment : Fragment() {
         }
     }
 
-    private val mutableListOfIndustryItemUi = mutableListOf<IndustryItemUi>()
     private fun showContent(list: List<Industry>) {
         binding.errorPlaceholder.isVisible = false
         binding.recyclerView.isVisible = true
-        list.forEach { industry ->
-            mutableListOfIndustryItemUi.add(IndustryItemUi(industry.id.toString(), industry.name, false))
-        }
-        adapter.setItems(mutableListOfIndustryItemUi)
+        adapter.setItems(list.toMutableList())
     }
 
     private fun showError() {
