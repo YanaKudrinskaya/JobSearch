@@ -14,4 +14,8 @@ class FilterRepositoryImpl(
     override fun saveFilterOptions(filter: FilterSettings) {
         storage.saveFilterOptions(filter)
     }
+
+    override fun getSavedIndustryId(): Int? {
+        return storage.getFilterOptions().industryId
+    }
 }
