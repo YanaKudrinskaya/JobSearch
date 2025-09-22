@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -132,7 +133,7 @@ class FilteringSettingsFragment : Fragment() {
     }
 
     private fun setupWorkplaceListener() {
-        binding.etWorkplace.setOnClickListener {
+        binding.tilWorkplace.setEndIconOnClickListener {
             val currentFilter = getCurrentFilter()
             val hasWorkplace = currentFilter.countryName != null || currentFilter.areaName != null
             if (hasWorkplace) {
@@ -144,10 +145,16 @@ class FilteringSettingsFragment : Fragment() {
                 )
             }
         }
+        binding.etWorkplace.setOnClickListener {
+            findNavController().navigate(
+                FilteringSettingsFragmentDirections
+                    .actionFilteringSettingsFragmentToChoiceOfWorkplaceFragment()
+            )
+        }
     }
 
     private fun setupIndustryListener() {
-        binding.etIndustry.setOnClickListener {
+        binding.tilIndustry.setEndIconOnClickListener {
             val currentFilter = getCurrentFilter()
             if (currentFilter.industryName != null) {
                 viewModel.clearIndustrySelection()
@@ -157,6 +164,12 @@ class FilteringSettingsFragment : Fragment() {
                         .actionFilteringSettingsFragmentToIndustryChoiceFragment()
                 )
             }
+        }
+        binding.etIndustry.setOnClickListener {
+            findNavController().navigate(
+                FilteringSettingsFragmentDirections
+                    .actionFilteringSettingsFragmentToIndustryChoiceFragment()
+            )
         }
     }
 
@@ -170,10 +183,10 @@ class FilteringSettingsFragment : Fragment() {
     private fun showEmptyState() {
         with(binding) {
             etWorkplace.setText("")
-            arrowForward.setImageResource(R.drawable.ic_arrow_forward)
+            setupWorkplaceIcon(false)
 
             etIndustry.setText("")
-            arrowForward2.setImageResource(R.drawable.ic_arrow_forward)
+            setupIndustryIcon(false)
 
             expectedSalary.setText("")
             materialCheckBox.isChecked = false
@@ -198,17 +211,26 @@ class FilteringSettingsFragment : Fragment() {
                 etWorkplace.setText(filter.countryName ?: "")
             }
             val hasWorkplace = filter.countryName != null || filter.areaName != null
-            val workplaceIcon = if (hasWorkplace) R.drawable.ic_close else R.drawable.ic_arrow_forward
-            arrowForward.setImageResource(workplaceIcon)
+            setupWorkplaceIcon(hasWorkplace)
         }
+    }
+
+    private fun setupWorkplaceIcon(hasWorkplace: Boolean) {
+        val iconRes = if (hasWorkplace) R.drawable.ic_close else R.drawable.ic_arrow_forward
+        binding.tilWorkplace.endIconDrawable = ContextCompat.getDrawable(requireContext(), iconRes)
     }
 
     private fun setupIndustries(filter: FilterSettings) {
         with(binding) {
             etIndustry.setText(filter.industryName ?: "")
-            val industryIcon = if (filter.industryName != null) R.drawable.ic_close else R.drawable.ic_arrow_forward
-            arrowForward2.setImageResource(industryIcon)
+            val hasIndustry = filter.industryName != null
+            setupIndustryIcon(hasIndustry)
         }
+    }
+
+    private fun setupIndustryIcon(hasIndustry: Boolean) {
+        val iconRes = if (hasIndustry) R.drawable.ic_close else R.drawable.ic_arrow_forward
+        binding.tilIndustry.endIconDrawable = ContextCompat.getDrawable(requireContext(), iconRes)
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
