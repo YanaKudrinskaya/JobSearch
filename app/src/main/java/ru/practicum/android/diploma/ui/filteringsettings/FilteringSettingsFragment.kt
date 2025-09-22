@@ -34,6 +34,8 @@ class FilteringSettingsFragment : Fragment() {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             binding.clearIcon.visibility = clearButtonVisibility(s)
             checkSalaryChanges(s?.toString() ?: "")
+            binding.applyButton.isVisible = true
+            binding.resetButton.isVisible = true
         }
 
         override fun afterTextChanged(s: Editable?) = Unit
