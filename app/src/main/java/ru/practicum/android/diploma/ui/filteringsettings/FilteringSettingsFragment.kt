@@ -130,12 +130,6 @@ class FilteringSettingsFragment : Fragment() {
             clearIcon.setOnClickListener {
                 expectedSalary.setText("")
                 updateSalary("")
-
-                binding.expectedSalary.isCursorVisible = false
-                binding.expectedSalary.clearFocus()
-                binding.expectedSalaryContainer.clearFocus()
-                binding.root.requestFocus()
-                KeyboardUtils.hideKeyboard(binding.expectedSalary)
             }
         }
     }
