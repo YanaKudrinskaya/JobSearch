@@ -20,4 +20,9 @@ class IndustryInteractorImpl(
         val currentFilter = filter.copy(industryId = industry.id, industryName = industry.name)
         filterRepository.saveFilterOptions(currentFilter)
     }
+
+    override fun getSavedIndustryId(): Int? {
+        return filterRepository.getSavedIndustryId()
+    }
+
 }

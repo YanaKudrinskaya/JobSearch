@@ -1,119 +1,135 @@
 package ru.practicum.android.diploma.ui.regionchoice
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ProgressBar
-import androidx.constraintlayout.widget.Group
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.delay
-import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.domain.areas.AreasInteractor
-import ru.practicum.android.diploma.domain.areas.models.Area
-import ru.practicum.android.diploma.presentation.regionchoice.RegionState
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
+import ru.practicum.android.diploma.databinding.FragmentRegionChoiceBinding
 import ru.practicum.android.diploma.presentation.regionchoice.RegionViewModel
-import ru.practicum.android.diploma.presentation.regionchoice.RegionViewModelFactory
-import ru.practicum.android.diploma.util.Resource
+import ru.practicum.android.diploma.presentation.regionchoice.models.RegionState
+import ru.practicum.android.diploma.ui.countrychoice.adapter.AreaAdapter
+import ru.practicum.android.diploma.ui.root.NavigationVisibilityController
+import kotlin.getValue
 
-class RegionChoiceFragment : Fragment(R.layout.fragment_select_region) {
+class RegionChoiceFragment : Fragment() {
 
-    private val testInteractor = object : AreasInteractor {
-        override suspend fun getAreas(): ru.practicum.android.diploma.util.Resource<List<Area>> {
-            delay(DELAY_500_MS)
-            return Resource.Success(
-                listOf(
-                    Area(MOSCOW_ID, "Москва"),
-                    Area(SPB_ID, "Санкт-Петербург"),
-                    Area(NOVOSIB_ID, "Новосибирск"),
-                    Area(EKB_ID, "Екатеринбург")
-                )
-            )
-        }
+    private val args by navArgs<RegionChoiceFragmentArgs>()
+    private var _binding: FragmentRegionChoiceBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel by viewModel<RegionViewModel> {
+        parametersOf(args.countryId)
     }
-
-    private val viewModel: RegionViewModel by viewModels {
-        RegionViewModelFactory(testInteractor)
-    }
-
-    private val recyclerView by lazy { requireView().findViewById<RecyclerView>(R.id.recyclerView) }
-    private val progressBar by lazy { requireView().findViewById<ProgressBar>(R.id.progressBar) }
-    private val groupNotFound by lazy { requireView().findViewById<Group>(R.id.group_not_found) }
-    private val groupError by lazy { requireView().findViewById<Group>(R.id.group_error) }
-    private val inputRegion by lazy { requireView().findViewById<TextInputEditText>(R.id.input_region) }
     private val adapter by lazy {
-        RegionAdapter(emptyList()) { area ->
-            viewModel.saveAndExit(area) {
-                requireActivity().onBackPressedDispatcher.onBackPressed()
+        AreaAdapter { area ->
+            viewModel.selectArea(area) { selectedArea ->
+                parentFragmentManager.setFragmentResult(
+                    "area_selection",
+                    bundleOf(
+                        "area_id" to selectedArea.id,
+                        "area_name" to selectedArea.name
+                    )
+                )
+                findNavController().popBackStack()
             }
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupAdapter()
-        setupListeners()
-        observeViewModel()
-        viewModel.search("")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        _binding = FragmentRegionChoiceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    private fun setupAdapter() {
-        recyclerView.adapter = adapter
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.recyclerView.adapter = adapter
+        setupListeners()
+        observeViewModel()
+
+    }
+
+    override fun onResume() {
+        (activity as? NavigationVisibilityController)?.setNavigationVisibility(false)
+        super.onResume()
     }
 
     private fun setupListeners() {
-        inputRegion.addTextChangedListener { text ->
-            viewModel.search(text.toString())
+        binding.searchRegion.addTextChangedListener { text ->
+            val query = text.toString()
+            adapter.filter(query)
+            checkFilterResults(query)
+            if (query.isEmpty()) {
+                binding.clearIcon.visibility = View.INVISIBLE
+                binding.searchFieldIcon.isVisible = true
+            } else {
+                binding.clearIcon.visibility = View.VISIBLE
+                binding.searchFieldIcon.isVisible = false
+            }
+        }
+
+        binding.clearIcon.setOnClickListener {
+            binding.searchRegion.setText("")
+        }
+
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
     private fun observeViewModel() {
         viewModel.screenState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is RegionState.Loading -> showLoading()
                 is RegionState.Empty -> showEmpty()
                 is RegionState.Error -> showError()
-                is RegionState.Content -> showContent(state.areasList)
+                is RegionState.Content -> {
+                    adapter.setItems(state.areasList.toMutableList())
+                }
             }
         }
     }
 
-    private fun showLoading() {
-        progressBar.visibility = View.VISIBLE
-        recyclerView.visibility = View.GONE
-        groupNotFound.visibility = View.GONE
-        groupError.visibility = View.GONE
+    private fun showError() {
+        binding.noSuchRegionPlaceholder.visibility = View.VISIBLE
+        binding.errorPlaceholder.visibility = View.GONE
     }
 
     private fun showEmpty() {
-        progressBar.visibility = View.GONE
-        recyclerView.visibility = View.GONE
-        groupNotFound.visibility = View.VISIBLE
-        groupError.visibility = View.GONE
+        binding.noSuchRegionPlaceholder.visibility = View.GONE
+        binding.errorPlaceholder.visibility = View.VISIBLE
     }
 
-    private fun showError() {
-        progressBar.visibility = View.GONE
-        recyclerView.visibility = View.GONE
-        groupNotFound.visibility = View.GONE
-        groupError.visibility = View.VISIBLE
+    private fun showContent() {
+        binding.noSuchRegionPlaceholder.visibility = View.GONE
+        binding.errorPlaceholder.visibility = View.GONE
     }
 
-    private fun showContent(list: List<Area>) {
-        progressBar.visibility = View.GONE
-        recyclerView.visibility = View.VISIBLE
-        groupNotFound.visibility = View.GONE
-        groupError.visibility = View.GONE
-        adapter.updateList(list)
+    private fun checkFilterResults(query: String) {
+        if (query.isNotEmpty()) {
+            if (adapter.itemCount == 0) {
+                showError()
+            } else {
+                showContent()
+            }
+        } else {
+            showContent()
+        }
     }
 
-    companion object {
-        private const val MOSCOW_ID = 1
-        private const val SPB_ID = 2
-        private const val NOVOSIB_ID = 3
-        private const val EKB_ID = 4
-        private const val DELAY_500_MS = 500L
+    override fun onDestroyView() {
+        (activity as? NavigationVisibilityController)?.setNavigationVisibility(true)
+        super.onDestroyView()
+        _binding = null
     }
 }

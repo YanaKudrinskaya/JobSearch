@@ -22,6 +22,7 @@ class FilterViewModel(
     private fun loadFilterSettings() {
         val filter = filterInteractor.getFilterOptions()
         updateScreenState(filter)
+        hasChangesLiveData.value = filterInteractor.hasActiveFilters()
     }
 
     fun clearFilter() {
@@ -37,11 +38,13 @@ class FilterViewModel(
         saveAndUpdate(updatedFilter)
     }
 
-    fun updateSalary(salary: String) {
+    fun saveSalary(salary: String) {
         val currentFilter = filterInteractor.getFilterOptions()
         val salaryValue = salary.takeIf { it.isNotBlank() }?.toIntOrNull()
-        val updatedFilter = currentFilter.copy(salary = salaryValue)
-        saveAndUpdate(updatedFilter)
+        if (currentFilter.salary != salaryValue) {
+            val updatedFilter = currentFilter.copy(salary = salaryValue)
+            filterInteractor.saveFilterOptions(updatedFilter)
+        }
     }
 
     private fun saveAndUpdate(filter: FilterSettings) {
@@ -57,6 +60,10 @@ class FilterViewModel(
             FilterScreenState.Empty
         }
         filterStateLiveData.value = state
+    }
+
+    fun setHasChanges(hasChanges: Boolean) {
+        hasChangesLiveData.value = hasChanges
     }
 
     fun updateContent() {

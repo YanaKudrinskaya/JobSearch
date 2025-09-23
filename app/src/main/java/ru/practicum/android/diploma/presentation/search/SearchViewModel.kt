@@ -115,6 +115,10 @@ class SearchViewModel(
         checkFilterState()
     }
 
+    fun showEmptyState() {
+        stateLiveData.value = SearchScreenState.Empty
+    }
+
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 1200L
     }

@@ -78,6 +78,7 @@ class SearchFragment : Fragment() {
         binding.searchFieldIcon.setOnClickListener {
             binding.searchField.setText("")
             vacancyAdapter.updateVacancies(emptyList())
+            viewModel.showEmptyState()
             clearScreen()
             showEmpty()
             hideKeyboard()

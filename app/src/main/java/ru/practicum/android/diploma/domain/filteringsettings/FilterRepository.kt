@@ -5,4 +5,6 @@ import ru.practicum.android.diploma.domain.filteringsettings.models.FilterSettin
 interface FilterRepository {
     fun getFilterOptions(): FilterSettings
     fun saveFilterOptions(filter: FilterSettings)
+
+    fun getSavedIndustryId(): Int?
 }
