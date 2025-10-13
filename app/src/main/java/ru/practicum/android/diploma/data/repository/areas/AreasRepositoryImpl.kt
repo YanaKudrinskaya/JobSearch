@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.areas
+package ru.practicum.android.diploma.data.repository.areas
 
 import ru.practicum.android.diploma.data.NetworkClient
 import ru.practicum.android.diploma.data.dto.RequestDto

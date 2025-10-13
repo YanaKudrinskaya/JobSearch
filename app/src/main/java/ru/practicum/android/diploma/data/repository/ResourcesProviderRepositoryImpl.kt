@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data
+package ru.practicum.android.diploma.data.repository
 
 import android.content.Context
 import android.graphics.drawable.Drawable

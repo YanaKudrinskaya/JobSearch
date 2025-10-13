@@ -1,9 +1,9 @@
-package ru.practicum.android.diploma.data.industrychoice
+package ru.practicum.android.diploma.data.repository.industrychoice
 
 import ru.practicum.android.diploma.data.NetworkClient
 import ru.practicum.android.diploma.data.dto.RequestDto
 import ru.practicum.android.diploma.data.dto.responses.IndustriesResponse
-import ru.practicum.android.diploma.data.industrychoice.mapper.DtoToIndustryMapper
+import ru.practicum.android.diploma.data.repository.industrychoice.mapper.DtoToIndustryMapper
 import ru.practicum.android.diploma.domain.industrychoice.IndustryRepository
 import ru.practicum.android.diploma.domain.industrychoice.models.Industry
 import ru.practicum.android.diploma.util.Resource

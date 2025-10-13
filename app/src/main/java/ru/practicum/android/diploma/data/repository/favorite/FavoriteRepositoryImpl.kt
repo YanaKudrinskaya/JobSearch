@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.favorite.impl
+package ru.practicum.android.diploma.data.repository.favorite
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

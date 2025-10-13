@@ -1,9 +1,10 @@
-package ru.practicum.android.diploma.data.search
+package ru.practicum.android.diploma.data.repository.search
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.practicum.android.diploma.data.NetworkClient
 import ru.practicum.android.diploma.data.dto.RequestDto
+import ru.practicum.android.diploma.data.dto.responses.Response
 import ru.practicum.android.diploma.data.dto.responses.VacanciesResponse
 import ru.practicum.android.diploma.data.mappers.VacancyMapper
 import ru.practicum.android.diploma.domain.filteringsettings.FilterRepository
@@ -56,7 +57,7 @@ class SearchRepositoryImpl(
     }
 
     private fun processResponse(response: Any): Resource<VacanciesSearchResult<VacancyPreview>> {
-        return when (val status = (response as? ru.practicum.android.diploma.data.dto.responses.Response)?.status) {
+        return when (val status = (response as? Response)?.status) {
             ResponseStatus.SUCCESS -> {
                 val vacanciesResponse = response as? VacanciesResponse
                 vacanciesResponse?.let {

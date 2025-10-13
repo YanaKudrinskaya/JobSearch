@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.industrychoice.mapper
+package ru.practicum.android.diploma.data.repository.industrychoice.mapper
 
 import ru.practicum.android.diploma.data.dto.FilterIndustryDto
 import ru.practicum.android.diploma.domain.industrychoice.models.Industry

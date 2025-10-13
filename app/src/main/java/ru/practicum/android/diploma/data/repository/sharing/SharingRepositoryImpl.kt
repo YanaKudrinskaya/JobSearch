@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.sharing
+package ru.practicum.android.diploma.data.repository.sharing
 
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.sharing.SharingRepository

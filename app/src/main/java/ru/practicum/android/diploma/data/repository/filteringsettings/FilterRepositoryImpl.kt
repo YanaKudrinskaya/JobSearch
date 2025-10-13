@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.filteringsettings
+package ru.practicum.android.diploma.data.repository.filteringsettings
 
 import ru.practicum.android.diploma.data.storage.Storage
 import ru.practicum.android.diploma.domain.filteringsettings.FilterRepository
