@@ -1,7 +1,7 @@
 # Job Search App
 <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android"> <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin"> <img src="https://img.shields.io/badge/iTunes%20API-FB6424?style=for-the-badge" alt="iTunes API">
 
-Мобильное приложение для поиска вакансий с использованием учебного API, разработанное в рамках дипломного проекта Яндекс Практикум. 
+Мобильное приложение для поиска вакансий. 
 
 ## 🎵 Оглавление
 
@@ -177,3 +177,4 @@ app/
 *   **Remote:** Retrofit + API для сетевых запросов
 
 ⭐ Поставьте звезду репозиторию, если проект вам понравился!
+
